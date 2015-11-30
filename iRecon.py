@@ -86,6 +86,15 @@ if len(opentcpport) != 0:
 else:
 	print "No open tcp port found"
 
+# now do full SYN and top 500 UDP
+nmapfullsyncmd= 'nmap -sS -P0 --reason -p 1-65535 -sV -A ' + ip + ' -oA nmap-full-syn-' + ip
+print "Nmap full SYN cmd: " + nmapfullsyncmd
+print commands.getoutput(nmapfullsyncmd)
+
+nmaptop500udp= 'nmap -sU -P0 --reason --top-ports 500 ' + ip + ' -oA nmap-udp-top-500-' + ip
+print "Nmap top 500 UDP cmd: " + nmaptop500udp
+print commands.getoutput(nmaptop500udp)
+
 
 
 

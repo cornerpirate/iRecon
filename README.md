@@ -7,9 +7,12 @@ This will simply do the following:
 * It will then make the following queries
 	* whois `<ip>`
 	* whois `<domainname>`
-	* nmap -sn -PE `<ip>` - check if ICMP echo responses are enabled on the target.
-	* nmap -sS -sU -P0 --top-ports 20 `<ip>` - check for the 20 most common TCP/UDP ports.
-	* nmap -p `<open port>` -tr `<ip>` - issue a TCP traceroute to any one open TCP port discovered by previous command.
+	* nmap -sn -PE `<ip>` # check if ICMP echo responses are enabled on the target.
+	* nmap -sS -sU -P0 --top-ports 20 `<ip>` # check for the 20 most common TCP/UDP ports.
+	* nmap -p `<open port>` -tr `<ip>` # issue a TCP traceroute to any one open TCP port discovered by previous command.
+	* nmap -sS -P0 --reason -p 1-65535 -sV -A <ip> # do full SYN scan ports 1-65535
+	* nmap -sU -P0 --reason --top-ports 500 <ip> # Increase UDP to 500 most common
+
 
 # Pre-Requisites
 * TLD python package: https://pypi.python.org/pypi/tld

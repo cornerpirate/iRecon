@@ -15,7 +15,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
- 
+#
+# == Developers
+# cornerpirate - https://twitter.com/cornerpirate
+# xpn - https://twitter.com/_xpn_
+# == Changelog
+# 04/12/2015 - xpn - resrctured to add in plugin support and accept ip address
+# 04/12/2015 - cornerpirate - improved usage instructions
 import sys
 import socket
 import os
@@ -149,7 +155,7 @@ if __name__ == '__main__':
 	
 	# Parse our passed arguments
 	parser = argparse.ArgumentParser()
-	parser.add_argument('target')
+	parser.add_argument('target', help="either a hosname like 'www.google.com' or an ip address, some checks are disabled if ip address is used")
 	args = parser.parse_args()
 	
 	# Try and verify if we have a domain or IP

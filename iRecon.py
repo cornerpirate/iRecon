@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # calling: ./iRecon.py <hostname>
-# for example: ./iRecon.py www.pentest.co.uk
+# for example: ./iRecon.py www.domain.com
 # 
-# Copyright 2015 cornerpirate.
+# Copyright 2021 cornerpirate.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,12 +22,14 @@
 # == Changelog
 # 04/12/2015 - xpn - resrctured to add in plugin support and accept ip address
 # 04/12/2015 - cornerpirate - improved usage instructions
+# 12/04/2021 - ZephrFish - Updated to python3
+
 import sys
 import socket
 import os
 from tld import get_tld
 from tld.utils import update_tld_names
-import commands
+import subprocess
 import argparse
 import re
 
@@ -50,8 +52,8 @@ class ReconIPWhoIsPlugin(ReconPlugin):
 		
 	def run(self, target):
 		whoisipcmd='whois ' + target + ' > whois-ip-' + target + '.txt'
-		print "Whois IP lookup cmd: " + whoisipcmd
-		print commands.getoutput(whoisipcmd)
+		print("Whois IP lookup cmd: " + whoisipcmd)
+		print(subprocess.getoutput(whoisipcmd))
 
 ''' Completes a WHOIS check on the provided domain name '''
 class ReconHostnameWhoIsPlugin(ReconPlugin):
@@ -63,8 +65,8 @@ class ReconHostnameWhoIsPlugin(ReconPlugin):
 		domainname = get_tld("http://"+target)
 		
 		whoisdomaincmd='whois ' + domainname + ' > whois-domain-' + domainname + '.txt'
-		print "Whois DOMAIN lookup cmd: " + whoisdomaincmd
-		print commands.getoutput(whoisdomaincmd)
+		print("Whois DOMAIN lookup cmd: " + whoisdomaincmd)
+		print(subprocess.getoutput(whoisdomaincmd))
 		
 ''' Runs a number of NMAP scans against the provided target '''
 class ReconNmapPlugin(ReconPlugin):
@@ -73,32 +75,32 @@ class ReconNmapPlugin(ReconPlugin):
 		
 	def run(self, target):
 		nmappingcmd= 'nmap -sn -PE ' + target + ' -oA nmap-ping-sweep-' + target 
-		print "Nmap Ping cmd: " + nmappingcmd
-		print commands.getoutput(nmappingcmd) 
+		print("Nmap Ping cmd: " + nmappingcmd)
+		print(subprocess.getoutput(nmappingcmd)) 
 		nmaptop20portscmd= 'nmap -sS -sU -P0 --reason --top-ports 20 ' + target + ' -oA nmap-top-20-ports-' + target 
-		print "Nmap top 20 ports cmd: " + nmaptop20portscmd
-		print commands.getoutput(nmaptop20portscmd) 
+		print("Nmap top 20 ports cmd: " + nmaptop20portscmd)
+		print(subprocess.getoutput(nmaptop20portscmd)) 
 		# check nmap ouput for open ports to then run traceroute
 		
 		opentcpportcmd='cat nmap-top-20-ports-' + target + '.nmap | grep "tcp" | grep "open\s" --color -m 1 | cut -d "/" -f 1'
-		print "Finding open tcp port cmd: " + opentcpportcmd
-		opentcpport = commands.getoutput(opentcpportcmd)
+		print("Finding open tcp port cmd: " + opentcpportcmd)
+		opentcpport = subprocess.getoutput(opentcpportcmd)
 		if len(opentcpport) != 0:
-			print "Found open port: " + opentcpport
+			print("Found open port: " + opentcpport)
 			nmaptraceroutecmd='nmap -p ' + opentcpport + ' -tr ' + target + ' -oA nmap-traceroute-' + target + '-' + opentcpport 
-			print "Nmap tcp traceroute command: " + nmaptraceroutecmd
-			print commands.getoutput(nmaptraceroutecmd)	
+			print("Nmap tcp traceroute command: " + nmaptraceroutecmd)
+			print(subprocess.getoutput(nmaptraceroutecmd))	
 		else:
-			print "No open tcp port found"
+			print("No open tcp port found")
 		
 		# now do full SYN and top 500 UDP
 		nmapfullsyncmd= 'nmap -sS -P0 --reason -p 1-65535 -sV -A ' + target + ' -oA nmap-full-syn-' + target
-		print "Nmap full SYN cmd: " + nmapfullsyncmd
-		print commands.getoutput(nmapfullsyncmd)
+		print("Nmap full SYN cmd: " + nmapfullsyncmd)
+		print(subprocess.getoutput(nmapfullsyncmd))
 		
 		nmaptop500udp= 'nmap -sU -P0 --reason --top-ports 500 ' + target + ' -oA nmap-udp-top-500-' + target
-		print "Nmap top 500 UDP cmd: " + nmaptop500udp
-		print commands.getoutput(nmaptop500udp)
+		print("Nmap top 500 UDP cmd: " + nmaptop500udp)
+		print(subprocess.getoutput(nmaptop500udp))
 
 
 ''' Engine responsible for executing all added plugins against a target '''
@@ -127,7 +129,7 @@ class ReconEngine:
 		if os.geteuid() == 0:
 			update_tld_names()
 		else:
-			print "Not running as root, you are going to need those privs to nmap properly"
+			print("Not running as root, you are going to need those privs to nmap properly")
 			sys.exit(-1)
 		
 		# try to resolve ip
@@ -135,8 +137,8 @@ class ReconEngine:
 			try:
 				self._ip = socket.gethostbyname(self._target)
 			except:
-				print "== Error on resolving IP check that hostname resolves: "
-				print sys.exc_info()
+				print("== Error on resolving IP check that hostname resolves: ")
+				print(sys.exc_info())
 				sys.exit(-1)
 		else:
 			self._ip = self._target

@@ -15,7 +15,12 @@ This will simply do the following:
 
 
 # Pre-Requisites
-* TLD python package: https://pypi.python.org/pypi/tld
-* Install using: "pip install tld".
+Install tld module
+
+```bash
+ sudo apt install python3-tld
+ ```
+
+
 * nmap must be within your path.
 * works only on *nix.
